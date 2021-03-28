@@ -14,7 +14,21 @@ use App\Http\Controllers\Auth\AuthController;
 |ll
 */
 
-// ログイン画面のルートをセット
-Route::get('/',[AuthController::class,'showLogin'])->name('showLogin');
-// ログイン処理のルートをセット
-Route::post('login',[AuthController::class, 'login'])->name('login');
+// ログイン前
+Route::middleware(['guest'])->group(function () {
+  // ログイン画面のルートをセット
+  Route::get('/', [AuthController::class, 'showLogin'])->name('login.show');
+  // ログイン処理のルートをセット
+  Route::post('login', [AuthController::class, 'login'])->name('login');
+});
+
+// ログイン後
+Route::middleware(['auth'])->group(function () {
+  // ホーム画面
+  Route::get('home', function () {
+    return view('home');
+  })->name('home');
+
+  // ログアウト
+  Route::post('logout',[AuthController::class,'logout'])->name('logout');
+});
